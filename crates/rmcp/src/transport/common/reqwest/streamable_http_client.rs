@@ -142,7 +142,7 @@ impl StreamableHttpClient for reqwest::Client {
             }
             _ => {
                 // unexpected content type
-                tracing::error!("unexpected content type: {:?}", content_type);
+                tracing::error!("unexpected content type: {:?} {}", content_type, response.bytes());
                 Err(StreamableHttpError::UnexpectedContentType(
                     content_type.map(|ct| String::from_utf8_lossy(ct.as_bytes()).to_string()),
                 ))
