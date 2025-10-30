@@ -149,9 +149,8 @@ impl StreamableHttpClient for reqwest::Client {
                 // Err(StreamableHttpError::UnexpectedContentType(
                 //     content_type.map(|ct| String::from_utf8_lossy(ct.as_bytes()).to_string()),
                 // ))
-
-                let message: ServerJsonRpcMessage = response.json().await?;
-                Ok(StreamableHttpPostResponse::Json(message, session_id))
+                
+                Ok(StreamableHttpPostResponse::Accepted)
             }
         }
     }
