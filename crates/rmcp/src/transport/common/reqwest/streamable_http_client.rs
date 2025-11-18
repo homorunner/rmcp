@@ -39,6 +39,8 @@ impl StreamableHttpClient for reqwest::Client {
             request_builder = request_builder.header(HEADER_LAST_EVENT_ID, last_event_id);
         }
         if let Some(auth_header) = auth_token {
+            request_builder = request_builder.header("access_token", auth_header.clone());
+            request_builder = request_builder.header("tokenKey", auth_header.clone());
             request_builder = request_builder.bearer_auth(auth_header);
         }
         let response = request_builder.send().await?;
@@ -70,6 +72,8 @@ impl StreamableHttpClient for reqwest::Client {
     ) -> Result<(), StreamableHttpError<Self::Error>> {
         let mut request_builder = self.delete(uri.as_ref());
         if let Some(auth_header) = auth_token {
+            request_builder = request_builder.header("access_token", auth_header.clone());
+            request_builder = request_builder.header("tokenKey", auth_header.clone());
             request_builder = request_builder.bearer_auth(auth_header);
         }
         let response = request_builder
@@ -97,6 +101,8 @@ impl StreamableHttpClient for reqwest::Client {
             .post(uri.as_ref())
             .header(ACCEPT, [EVENT_STREAM_MIME_TYPE, JSON_MIME_TYPE].join(", "));
         if let Some(auth_header) = auth_token {
+            request = request.header("access_token", auth_header.clone());
+            request = request.header("tokenKey", auth_header.clone());
             request = request.bearer_auth(auth_header);
         }
         if let Some(session_id) = session_id {
@@ -142,10 +148,12 @@ impl StreamableHttpClient for reqwest::Client {
             }
             _ => {
                 // unexpected content type
-                tracing::error!("unexpected content type: {:?}", content_type);
-                Err(StreamableHttpError::UnexpectedContentType(
-                    content_type.map(|ct| String::from_utf8_lossy(ct.as_bytes()).to_string()),
-                ))
+                // tracing::error!("unexpected content type: {:?}", content_type);
+                // Err(StreamableHttpError::UnexpectedContentType(
+                //     content_type.map(|ct| String::from_utf8_lossy(ct.as_bytes()).to_string()),
+                // ))
+                
+                Ok(StreamableHttpPostResponse::Accepted)
             }
         }
     }
